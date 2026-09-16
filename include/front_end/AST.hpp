@@ -47,7 +47,7 @@ namespace AST {
          * 
          * @param value The value of the number node.
          */
-        NumberNode(double value);
+        NumberNode(const std::string& value);
 
         /**
          * @brief Prints the number node.
@@ -55,8 +55,16 @@ namespace AST {
          */
         void print() const override;
 
+        /**
+         * @brief Gets the value of the number node.
+         * 
+         * @return std::size_t The value of the number node.
+         */
+        std::size_t getValue() const;
+
     private:
-        double mValue;
+        std::size_t mValue;
+        NumericType mNumericType;
         
     };
 

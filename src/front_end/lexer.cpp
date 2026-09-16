@@ -49,6 +49,21 @@ namespace Lexer {
                     ++i;
                 }
 
+                if (source[i] == 'u' || source[i] == 'U') {
+                    number += source[i];
+                    ++i;
+                }
+
+                if (source[i] == 'f' || source[i] == 'F' ||
+                    source[i] == 'd' || source[i] == 'D' ||
+                    source[i] == 'l' || source[i] == 'L' ||
+                    source[i] == 'i' || source[i] == 'I' ||
+                    source[i] == 's' || source[i] == 'S' ||
+                    source[i] == 'c' || source[i] == 'C') {
+                    number += source[i];
+                    ++i;
+                }
+
                 --i; // Adjust for the extra increment in the loop
                 tokens.emplace_back(TokenType::eNUMBER, number);
             } 

@@ -21,13 +21,86 @@ namespace AST {
 
     // NUMberNode implementation ===================================
 
-    NumberNode::NumberNode(double value)
-        : mValue(value) 
-    {}
+    NumberNode::NumberNode(const std::string& value)
+    : mValue(0)
+    , mNumericType(NumericType::eUNKNOWN)
+    {
+        std::size_t type = 0;
+
+        if (value.at(value.size() - 1) == 'u' || value.at(value.size() - 1) == 'U' ||
+            value.at(value.size() - 2) == 'u' || value.at(value.size() - 2) == 'U') {
+            type |= UNSIGNED;
+        }
+        else {
+            type |= SIGNED;
+        }
+
+        std::size_t point = value.find('.');
+
+        if (point != std::string::npos) {
+            if (value.back() == 'f' || value.back() == 'F') {
+                type |=  FLOATING_POINT | SIZE_32;
+                float tempValue = std::stof(value);
+                std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+            } 
+            else if (value.back() == 'd' || value.back() == 'D') {
+                type |= FLOATING_POINT | SIZE_64;
+                double tempValue = std::stof(value);
+                std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+            } 
+            else {
+                type |= FLOATING_POINT | SIZE_64; // Default to FLOAT64 for floating-point values
+                double tempValue = std::stof(value);
+                std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+            }
+        } 
+        else if (value.back() == 'f' || value.back() == 'F') {
+            type |=  FLOATING_POINT | SIZE_32;
+            float tempValue = std::stof(value);
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else if (value.back() == 'd' || value.back() == 'D') {
+            type |= FLOATING_POINT | SIZE_64;
+            double tempValue = std::stof(value);
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else if (value.back() == 'l' || value.back() == 'L') {
+            type |= INTEGER | SIZE_64;
+            long tempValue = std::stol(value);
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else if (value.back() == 'i' || value.back() == 'I') {
+            type |= INTEGER | SIZE_32;
+            int tempValue = std::stoi(value);
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else if (value.back() == 's' || value.back() == 'S') {
+            type |= INTEGER | SIZE_16;
+            short tempValue = static_cast<short>(std::stoi(value));
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else if (value.back() == 'c' || value.back() == 'C') {
+            type |= INTEGER | SIZE_8;
+            char tempValue = static_cast<char>(std::stoi(value));
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        } 
+        else {
+            type |= INTEGER | SIZE_32; // Default to INT32 for integer values
+            int tempValue = std::stoi(value);
+            std::memcpy(&mValue, &tempValue, sizeof(tempValue));
+        }
+
+        mNumericType = static_cast<NumericType>(type);
+    }
 
     void NumberNode::print() const 
     {
         std::cout << "NumberNode: " << mValue << std::endl;
+    }
+
+    std::size_t NumberNode::getValue() const
+    {
+        return mValue;
     }
 
     // VariableNode implementation ===================================
