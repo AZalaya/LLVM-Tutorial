@@ -12,23 +12,11 @@
 #ifndef TOKENS_HPP
 #define TOKENS_HPP
 
+#include "definitions.hpp"
+
 #include <string>
 
 namespace FrontEnd {
-
-    enum class TokenType {
-        eEOF,
-        
-        // Commands
-        eDEFINITION,
-        eEXTERN,
-
-        // Primary
-        eIDENTIFIER,
-        eNUMBER,
-
-        eUNKNOWN
-    };
 
     struct Token 
     {

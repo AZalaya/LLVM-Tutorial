@@ -12,6 +12,9 @@
 #ifndef AST_HPP
 #define AST_HPP
 
+#include "definitions.hpp"
+
+#include <cstddef>
 #include <string>
 #include <memory>
 #include <vector>

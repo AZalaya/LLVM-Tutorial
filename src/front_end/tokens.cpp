@@ -9,7 +9,7 @@
  * 
  */
 
-#include "front_end/tokens.hpp"
+#include "tokens.hpp"
 
  namespace FrontEnd {
 
@@ -20,14 +20,7 @@
 
     std::string Token::ToString() const
     {
-        switch (mType) {
-            case TokenType::eEOF: return "EOF";
-            case TokenType::eDEFINITION: return "DEFINITION";
-            case TokenType::eEXTERN: return "EXTERN";
-            case TokenType::eIDENTIFIER: return "IDENTIFIER(" + mValue + ")";
-            case TokenType::eNUMBER: return "NUMBER(" + mValue + ")";
-            default: return "UNKNOWN(" + mValue + ")";
-        }
+        return "Token(Type: " + TOKEN_TO_STRING.at(mType) + ", Value: " + mValue + ")";
     }
 
 }

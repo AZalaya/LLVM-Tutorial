@@ -9,7 +9,7 @@
  * 
  */
 
-#include "front_end/lexer.hpp"
+#include "lexer.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -34,10 +34,12 @@ int main(int argc, char** argv)
     // Tokenize the source code
     std::vector<FrontEnd::Token> tokens = FrontEnd::Lexer::Lexer::Tokenize(sourceCode);
 
+#if defined(DEBUG) || defined(VERBOSE)
     // Print the tokens
     for (const FrontEnd::Token& token : tokens) {
         std::cout << token.ToString() << std::endl; // Assuming Token has a toString() method
     }
+#endif
 
     return 0;
 }

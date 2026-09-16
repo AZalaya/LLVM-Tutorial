@@ -9,10 +9,12 @@
  * 
  */
 
-#include "front_end/AST.hpp"
+#include "AST.hpp"
 
+#include <cstddef>
 #include <iostream>
 #include <memory>
+#include <cstring>
 
 namespace FrontEnd {
 namespace AST {

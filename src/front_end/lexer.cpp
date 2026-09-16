@@ -9,7 +9,7 @@
  * 
  */
 
-#include "front_end/lexer.hpp"
+#include "lexer.hpp"
 
 namespace FrontEnd {
 namespace Lexer {
@@ -41,7 +41,7 @@ namespace Lexer {
                     tokens.emplace_back(TokenType::eIDENTIFIER, identifier);
                 }
             } 
-            else if (isdigit(currentChar)) {
+            else if (isdigit(currentChar) && currentChar != '0') {
                 std::string number;
 
                 while (i < source.size() && (isdigit(source[i]) || source[i] == '.')) {

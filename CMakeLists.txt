@@ -4,19 +4,14 @@ project(LLVM-Tutorial)
 
 add_executable(CKal)
 
-target_sources(CKal
-    PRIVATE
-    src/main.cpp
-    src/front_end/lexer.cpp
-    src/front_end/tokens.cpp
-    src/front_end/AST.cpp
-    
-    PUBLIC
-    FILE_SET HEADERS
-    BASE_DIRS
-    include
-    FILES
-    include/front_end/lexer.hpp
-    include/front_end/tokens.hpp
-    include/front_end/AST.hpp
-)
+target_compile_features(CKal PRIVATE cxx_std_20)
+
+option(DEBUG "Enable debug output" OFF)
+option(VERBOSE "Enable verbose output" ON)
+
+target_include_directories(CKal PUBLIC "include")
+target_include_directories(CKal PUBLIC "include/front_end")
+target_include_directories(CKal PUBLIC "include/utils")
+
+add_subdirectory("include")
+add_subdirectory("src")
