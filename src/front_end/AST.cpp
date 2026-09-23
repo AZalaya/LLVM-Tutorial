@@ -11,10 +11,9 @@
 
 #include "AST.hpp"
 
-#include <cstddef>
 #include <iostream>
 #include <memory>
-#include <cstring>
+#include <string>
 
 namespace FrontEnd {
 namespace AST {

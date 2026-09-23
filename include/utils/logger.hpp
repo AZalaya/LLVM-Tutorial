@@ -1,0 +1,56 @@
+/**
+ * @file logger.hpp
+ * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
+ * @brief Header file for the Logger class singleton.
+ * @version 0.1
+ * @date 2026-09-23
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
+
+#ifndef LOGGER_HPP
+#define LOGGER_HPP
+
+#include <string>
+
+class Logger
+{
+public:
+    enum class LogLevel
+    {
+        eINFO,
+        eERROR
+    };
+
+private:
+    /**
+     * @brief Construct a new Logger object
+     * 
+     */
+    Logger() = default;
+
+    /**
+     * @brief Destroy the Logger object
+     * 
+     */
+    ~Logger() = default;
+
+public:
+    /**
+     * @brief Get the Logger object
+     * 
+     * @return Logger& Singleton logger reference
+     */
+    static Logger& GetLogger();
+
+    /**
+     * @brief Log new message.
+     * 
+     * @param level Message level.
+     * @param message Message string to print.
+     */
+    void Log(LogLevel level, const std::string& message);
+};
+
+#endif

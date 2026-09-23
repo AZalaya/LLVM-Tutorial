@@ -3,4 +3,5 @@ target_sources(CKal
     lexer.cpp
     tokens.cpp
     AST.cpp
+    parser.cpp
 )

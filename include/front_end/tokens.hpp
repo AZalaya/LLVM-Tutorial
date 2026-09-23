@@ -1,7 +1,7 @@
 /**
  * @file tokens.hpp
  * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
- * @brief  Header file for the TokenType enum and Token struct used in the lexer.
+ * @brief Header file for the TokenType enum and Token struct used in the lexer.
  * @version 0.1
  * @date 2026-09-13
  * 
