@@ -12,6 +12,8 @@
 #ifndef AST_HPP
 #define AST_HPP
 
+#include "definitions.hpp"
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -32,7 +34,7 @@ namespace AST {
          * @brief Prints the AST node.
          * 
          */
-        virtual void print() const = 0;
+        virtual std::string ToString() const = 0;
 
     };
 
@@ -50,7 +52,7 @@ namespace AST {
          * @brief Prints the number node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
         /**
          * @brief Gets the value of the number node.
@@ -79,7 +81,7 @@ namespace AST {
          * @brief Prints the variable node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
     private:
         std::string mName;
@@ -96,16 +98,16 @@ namespace AST {
          * @param left The left operand of the binary operation.
          * @param right The right operand of the binary operation.
          */
-        BinaryOpNode(char op, std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right);
+        BinaryOpNode(BinaryOperators op, std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right);
 
         /**
          * @brief Prints the binary operation node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
     private:
-        char mOp;
+        BinaryOperators mOp;
         std::unique_ptr<ASTNode> mLeft;
         std::unique_ptr<ASTNode> mRight;
     };
@@ -124,7 +126,7 @@ namespace AST {
          * @brief Prints the function call node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
     private:
         std::string mName;
@@ -146,7 +148,7 @@ namespace AST {
          * @brief Prints the function declaration node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
     private:
         std::string mName;
@@ -169,7 +171,7 @@ namespace AST {
          * @brief Prints the function definition node.
          * 
          */
-        void print() const override;
+        std::string ToString() const override;
 
     private:
         std::unique_ptr<FunctionDeclarationNode> mDeclaration;

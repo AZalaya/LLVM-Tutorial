@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
- * @brief Main entry point for the lexer application. This program reads a source file, tokenizes its content using the Lexer class, and prints the resulting tokens to the console.
+ * @brief Main entry point for the CKal compiler application.
  * @version 0.1
  * @date 2026-09-13
  * 
@@ -9,7 +9,9 @@
  * 
  */
 
+#include "logger.hpp"
 #include "lexer.hpp"
+#include "parser.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -34,10 +36,20 @@ int main(int argc, char** argv)
     // Tokenize the source code
     std::vector<FrontEnd::Token> tokens = FrontEnd::Lexer::Lexer::Tokenize(sourceCode);
 
-#if defined(DEBUG) || defined(VERBOSE)
+#if defined(DEBUG)
     // Print the tokens
     for (const FrontEnd::Token& token : tokens) {
-        std::cout << token.ToString() << std::endl; // Assuming Token has a toString() method
+        Logger::GetLogger().Log(LogLevel::eDEBUG, token.ToString());
+    }
+#endif
+
+    std::vector<std::unique_ptr<FrontEnd::AST::ASTNode>> ast_nodes = 
+        FrontEnd::Parser(tokens).Parse();
+
+#if defined(DEBUG)
+    // Print the AST nodes
+    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& node : ast_nodes) {
+        Logger::GetLogger().Log(LogLevel::eDEBUG, node->ToString());
     }
 #endif
 

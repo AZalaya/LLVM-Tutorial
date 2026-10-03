@@ -12,17 +12,12 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "definitions.hpp"
+
 #include <string>
 
 class Logger
 {
-public:
-    enum class LogLevel
-    {
-        eINFO,
-        eERROR
-    };
-
 private:
     /**
      * @brief Construct a new Logger object

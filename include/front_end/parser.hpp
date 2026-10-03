@@ -15,7 +15,6 @@
 #include "tokens.hpp"
 #include "AST.hpp"
 
-#include <memory>
 #include <vector>
 
 namespace FrontEnd {
@@ -41,7 +40,7 @@ namespace FrontEnd {
          * 
          * @return std::unique_ptr<AST::ASTNode> 
          */
-        std::unique_ptr<AST::ASTNode> Parse();
+        std::vector<std::unique_ptr<AST::ASTNode>> Parse();
 
     private:
         /**
@@ -51,11 +50,62 @@ namespace FrontEnd {
         void GetNextToken();
 
         /**
+         * @brief Get precedence of the current binary operator token.
+         * 
+         * @return BinaryOperators 
+         */
+        BinaryOperators GetBinaryOperatorPrecedence() const;
+
+        /**
+         * @brief Parse a function definition.
+         * 
+         * @return std::unique_ptr<AST::FunctionDefinitionNode> Pointer to a function definition node.
+         */
+        std::unique_ptr<AST::FunctionDefinitionNode> ParseDefinition();
+
+        /**
+         * @brief Parse a function declaration.
+         * 
+         * @return std::unique_ptr<AST::FunctionDeclarationNode> Pointer to a function declaration node.
+         */
+        std::unique_ptr<AST::FunctionDeclarationNode> ParseExtern();
+
+        /**
+         * @brief Parse an anonymous expression.
+         * 
+         * @return std::unique_ptr<AST::FunctionDefinitionNode> Pointer to a function definition node.
+         */
+        std::unique_ptr<AST::FunctionDefinitionNode> ParseAnonymousExpression();
+
+        /**
+         * @brief Parse a function declaration.
+         * 
+         * @return std::unique_ptr<AST::FunctionDeclarationNode> Pointer to a function declaration node.
+         */
+        std::unique_ptr<AST::FunctionDeclarationNode> ParseDeclaration();
+
+        /**
          * @brief Parse an expression.
          * 
          * @return std::unique_ptr<AST::ASTNode> Pointer to node in the AST.
          */
-        std::unique_ptr<AST::ASTNode> ParseExpresion();
+        std::unique_ptr<AST::ASTNode> ParseExpression();
+
+        /**
+         * @brief Parse a primary expression.
+         * 
+         * @return std::unique_ptr<AST::ASTNode> 
+         */
+        std::unique_ptr<AST::ASTNode> ParsePrimaryExpression();
+
+        /**
+         * @brief Parse a binary expression.
+         * 
+         * @param precedence The precedence of the binary operator.
+         * @param lhs The left-hand side of the binary expression.
+         * @return std::unique_ptr<AST::ASTNode> Pointer to node in the AST.
+         */
+        std::unique_ptr<AST::ASTNode> ParseBinaryExpression(BinaryOperators precedence, std::unique_ptr<AST::ASTNode> lhs);
 
         /**
          * @brief Parse a numeric value.
@@ -65,7 +115,7 @@ namespace FrontEnd {
         std::unique_ptr<AST::ASTNode> ParseNumber();
 
         /**
-         * @brief Parse an expresion thats in between parenthesis.
+         * @brief Parse an expression thats in between parenthesis.
          * 
          * @return std::unique_ptr<AST::ASTNode> Pointer to node in the AST.
          */

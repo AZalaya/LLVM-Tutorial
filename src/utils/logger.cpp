@@ -10,6 +10,7 @@
  */
 
 #include "logger.hpp"
+#include "definitions.hpp"
 #include <iostream>
 
 Logger& Logger::GetLogger()
@@ -21,19 +22,15 @@ Logger& Logger::GetLogger()
 
 void Logger::Log(LogLevel level, const std::string& message)
 {
-    switch (level) 
-    {
-    case LogLevel::eINFO:
-        std::cout << "[INFO] ";
-        break;
-
-    case LogLevel::eERROR:
-        std::cout << "[ERROR] ";
-        break;
-
-    default:
-        std::cout << "[UNKNOWN] ";
+#if !defined(DEBUG)
+    if (level != LogLevel::eDEBUG) {
+#endif
+    std::cout << '[' 
+              << LOG_LEVEL_TO_STRING.at(level) 
+              << "]: "
+              << message 
+              << std::endl;
+#if !defined(DEBUG)
     }
-
-    std::cout << message << std::endl;
+#endif
 }

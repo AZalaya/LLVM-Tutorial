@@ -12,8 +12,25 @@
 #ifndef DEFINITIONS_HPP
 #define DEFINITIONS_HPP
 
-#include <string>
+#include <string_view>
 #include <unordered_map>
+
+enum class LogLevel
+{
+    eINFO,
+    eDEBUG,
+    eERROR
+};
+
+static constexpr std::string_view INFO_STRING = "INFO";
+static constexpr std::string_view DEBUG_STRING = "DEBUG";
+static constexpr std::string_view ERROR_STRING = "ERROR";
+
+static const std::unordered_map<LogLevel, std::string_view> LOG_LEVEL_TO_STRING = {
+    { LogLevel::eINFO, INFO_STRING },
+    { LogLevel::eDEBUG, DEBUG_STRING },
+    { LogLevel::eERROR, ERROR_STRING }
+};
 
 namespace FrontEnd {
 
@@ -27,6 +44,20 @@ namespace FrontEnd {
         // Primary
         eIDENTIFIER,
         eNUMBER,
+
+        // Braces
+        ePARENTHESIS_START,
+        ePARENTHESIS_FINISH,
+
+        // Operators
+        eLESS_THAN,
+        eSUM,
+        eMINUS,
+        eMULTIPLY,
+
+        // Separators
+        eEOL,
+        eCOMMA,
 
         eUNKNOWN
     };
@@ -58,36 +89,75 @@ namespace FrontEnd {
         eUNKNOWN
     };
 
-    static constexpr std::string EOF_STRING = "EOF";
-    static constexpr std::string DEFINITION_STRING = "DEFINITION";
-    static constexpr std::string EXTERN_STRING = "EXTERN";
-    static constexpr std::string IDENTIFIER_STRING = "IDENTIFIER";
-    static constexpr std::string NUMBER_STRING = "NUMBER";
-    static constexpr std::string UNKNOWN_STRING = "UNKNOWN";
+    enum class BinaryOperators {
+        eLESS_THAN = 1,
+        eSUM,
+        eMINUS,
+        eMULTIPLY,
 
-    static const std::unordered_map<TokenType, std::string> TOKEN_TO_STRING = {
+        eUNKNOWN = -1
+    };
+
+    static constexpr std::string_view EOF_STRING = "EOF";
+    static constexpr std::string_view DEFINITION_STRING = "DEFINITION";
+    static constexpr std::string_view EXTERN_STRING = "EXTERN";
+    static constexpr std::string_view IDENTIFIER_STRING = "IDENTIFIER";
+    static constexpr std::string_view NUMBER_STRING = "NUMBER";
+    static constexpr std::string_view PARENTHESIS_START_STRING = "PARENTHESIS_START";
+    static constexpr std::string_view PARENTHESIS_FINISH_STRING = "PARENTHESIS_FINISH";
+    static constexpr std::string_view LESS_THAN_STRING = "LESS_THAN";
+    static constexpr std::string_view SUM_STRING = "SUM";
+    static constexpr std::string_view MINUS_STRING = "MINUS";
+    static constexpr std::string_view MULTIPLY_STRING = "MULTIPLY";
+    static constexpr std::string_view EOL_STRING = "EOL";
+    static constexpr std::string_view COMMA_STRING = "COMMA";
+    static constexpr std::string_view UNKNOWN_STRING = "UNKNOWN";
+
+    static const std::unordered_map<TokenType, std::string_view> TOKEN_TO_STRING = {
         { TokenType::eEOF, EOF_STRING },
         { TokenType::eDEFINITION, DEFINITION_STRING },
         { TokenType::eEXTERN, EXTERN_STRING },
         { TokenType::eIDENTIFIER, IDENTIFIER_STRING },
         { TokenType::eNUMBER, NUMBER_STRING },
+        { TokenType::ePARENTHESIS_START, PARENTHESIS_START_STRING },
+        { TokenType::ePARENTHESIS_FINISH, PARENTHESIS_FINISH_STRING },
+        { TokenType::eLESS_THAN, LESS_THAN_STRING },
+        { TokenType::eSUM, SUM_STRING },
+        { TokenType::eMINUS, MINUS_STRING },
+        { TokenType::eMULTIPLY, MULTIPLY_STRING },
+        { TokenType::eEOL, EOL_STRING },
+        { TokenType::eCOMMA, COMMA_STRING },
         { TokenType::eUNKNOWN, UNKNOWN_STRING }
     };
 
-    static constexpr std::string INT8_STRING = "INT8";
-    static constexpr std::string INT16_STRING = "INT16";
-    static constexpr std::string INT32_STRING = "INT32";
-    static constexpr std::string INT64_STRING = "INT64";
-    static constexpr std::string UINT8_STRING = "UINT8";
-    static constexpr std::string UINT16_STRING = "UINT16";
-    static constexpr std::string UINT32_STRING = "UINT32";
-    static constexpr std::string UINT64_STRING = "UINT64";
-    static constexpr std::string FLOAT32_STRING = "FLOAT32";
-    static constexpr std::string FLOAT64_STRING = "FLOAT64";
-    static constexpr std::string UFLOAT32_STRING = "UFLOAT32";
-    static constexpr std::string UFLOAT64_STRING = "UFLOAT64";
+    static const std::unordered_map<BinaryOperators, std::string_view> BINARY_OPERATOR_TO_STRING = {
+        { BinaryOperators::eLESS_THAN, LESS_THAN_STRING },
+        { BinaryOperators::eSUM, SUM_STRING },
+        { BinaryOperators::eMINUS, MINUS_STRING },
+        { BinaryOperators::eMULTIPLY, MULTIPLY_STRING }
+    };
 
-    static const std::unordered_map<NumericType, std::string> NUMERIC_TO_STRING = {
+    static const std::unordered_map<TokenType, BinaryOperators> TOKEN_TO_OPERATOR = {
+        { TokenType::eLESS_THAN, BinaryOperators::eLESS_THAN },
+        { TokenType::eSUM, BinaryOperators::eSUM },
+        { TokenType::eMINUS, BinaryOperators::eMINUS },
+        { TokenType::eMULTIPLY, BinaryOperators::eMULTIPLY },
+    };
+
+    static constexpr std::string_view INT8_STRING = "INT8";
+    static constexpr std::string_view INT16_STRING = "INT16";
+    static constexpr std::string_view INT32_STRING = "INT32";
+    static constexpr std::string_view INT64_STRING = "INT64";
+    static constexpr std::string_view UINT8_STRING = "UINT8";
+    static constexpr std::string_view UINT16_STRING = "UINT16";
+    static constexpr std::string_view UINT32_STRING = "UINT32";
+    static constexpr std::string_view UINT64_STRING = "UINT64";
+    static constexpr std::string_view FLOAT32_STRING = "FLOAT32";
+    static constexpr std::string_view FLOAT64_STRING = "FLOAT64";
+    static constexpr std::string_view UFLOAT32_STRING = "UFLOAT32";
+    static constexpr std::string_view UFLOAT64_STRING = "UFLOAT64";
+
+    static const std::unordered_map<NumericType, std::string_view> NUMERIC_TO_STRING = {
         { NumericType::eINT8, INT8_STRING },
         { NumericType::eINT16, INT16_STRING },
         { NumericType::eINT32, INT32_STRING },

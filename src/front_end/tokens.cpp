@@ -13,14 +13,14 @@
 
  namespace FrontEnd {
 
-    Token::Token(TokenType t, const std::string& v) 
-    : mType(t)
-    , mValue(v) 
+    Token::Token(TokenType token_type, const std::string& value) 
+    : mType(token_type)
+    , mValue(value) 
     {}
 
     std::string Token::ToString() const
     {
-        return "Token(Type: " + TOKEN_TO_STRING.at(mType) + ", Value: " + mValue + ")";
+        return "Token(Type: " + std::string(TOKEN_TO_STRING.at(mType)) + ", Value: " + mValue + ")";
     }
 
 }

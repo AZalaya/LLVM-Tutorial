@@ -11,7 +11,6 @@
 
 #include "AST.hpp"
 
-#include <iostream>
 #include <memory>
 #include <string>
 
@@ -92,9 +91,9 @@ namespace AST {
         mNumericType = static_cast<NumericType>(type);
     }
 
-    void NumberNode::print() const 
+    std::string NumberNode::ToString() const 
     {
-        std::cout << "NumberNode: " << mValue << std::endl;
+        return "NumberNode: " + std::to_string(mValue) + '\n';
     }
 
     std::size_t NumberNode::getValue() const
@@ -108,28 +107,28 @@ namespace AST {
         : mName(name) 
     {}
 
-    void VariableNode::print() const 
+    std::string VariableNode::ToString() const 
     {
-        std::cout << "VariableNode: " << mName << std::endl;
+        return "VariableNode: " + mName + '\n';
     }
 
     // BinaryOpNode implementation ===================================
 
-    BinaryOpNode::BinaryOpNode(char op, std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right)
+    BinaryOpNode::BinaryOpNode(BinaryOperators op, std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right)
         : mOp(op), mLeft(std::move(left)), mRight(std::move(right)) 
     {}
 
-    void BinaryOpNode::print() const 
+    std::string BinaryOpNode::ToString() const 
     {
-        std::cout << "BinaryOpNode: " << mOp << std::endl;
+        std::string result = "BinaryOpNode: " + std::string(BINARY_OPERATOR_TO_STRING.at(mOp)) + '\n';
         if (mLeft) {
-            std::cout << "Left: ";
-            mLeft->print();
+            result += mLeft->ToString();
         }
         if (mRight) {
-            std::cout << "Right: ";
-            mRight->print();
+            result += mRight->ToString();
         }
+        
+        return result;
     }
 
     // FunctionCallNode implementation ===================================
@@ -138,15 +137,16 @@ namespace AST {
         : mName(name), mArguments(std::move(arguments)) 
     {}
 
-    void FunctionCallNode::print() const 
+    std::string FunctionCallNode::ToString() const 
     {
-        std::cout << "FunctionCallNode: " << mName << std::endl;
+        std::string result = "FunctionCallNode: " + mName + '\n';
         for (const std::unique_ptr<ASTNode>& arg : mArguments) {
             if (arg) {
-                std::cout << "Argument: ";
-                arg->print();
+                result += arg->ToString();
             }
         }
+        
+        return result;
     }
 
     // FunctionDeclarationNode implementation ===================================
@@ -155,12 +155,14 @@ namespace AST {
         : mName(name), mArguments(std::move(arguments)) 
     {}
 
-    void FunctionDeclarationNode::print() const 
+    std::string FunctionDeclarationNode::ToString() const 
     {
-        std::cout << "FunctionDeclarationNode: " << mName << std::endl;
+        std::string result = "FunctionDeclarationNode: " + mName + '\n';
         for (const std::string& arg : mArguments) {
-            std::cout << "Argument: " << arg << std::endl;
+            result += "Argument: " + arg + '\n';
         }
+        
+        return result;
     }
 
     // FunctionDefinitionNode implementation ===================================
@@ -169,17 +171,17 @@ namespace AST {
         : mDeclaration(std::move(declaration)), mBody(std::move(body)) 
     {}
 
-    void FunctionDefinitionNode::print() const 
+    std::string FunctionDefinitionNode::ToString() const 
     {
-        std::cout << "FunctionDefinitionNode: " << std::endl;
+        std::string result = "FunctionDefinitionNode: \n";
         if (mDeclaration) {
-            std::cout << "Declaration: ";
-            mDeclaration->print();
+            result += mDeclaration->ToString();
         }
         if (mBody) {
-            std::cout << "Body: ";
-            mBody->print();
+            result += mBody->ToString();
         }
+
+        return result;
     }
 
 } // namespace AST

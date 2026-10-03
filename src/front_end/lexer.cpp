@@ -11,6 +11,8 @@
 
 #include "lexer.hpp"
 
+#include "definitions.hpp"
+
 namespace FrontEnd {
 namespace Lexer {
 
@@ -73,6 +75,30 @@ namespace Lexer {
                     ++i;
                 }
             } 
+            else if (currentChar == '(') {
+                tokens.emplace_back(TokenType::ePARENTHESIS_START, std::string(1, currentChar));
+            }
+            else if (currentChar == ')') {
+                tokens.emplace_back(TokenType::ePARENTHESIS_FINISH, std::string(1, currentChar));
+            }
+            else if (currentChar == '<') {
+                tokens.emplace_back(TokenType::eLESS_THAN, std::string(1, currentChar));
+            }
+            else if (currentChar == '+') {
+                tokens.emplace_back(TokenType::eSUM, std::string(1, currentChar));
+            }
+            else if (currentChar == '-') {
+                tokens.emplace_back(TokenType::eMINUS, std::string(1, currentChar));
+            }
+            else if (currentChar == '*') {
+                tokens.emplace_back(TokenType::eMULTIPLY, std::string(1, currentChar));
+            }
+            else if (currentChar == ';') {
+                tokens.emplace_back(TokenType::eEOL, std::string(1, currentChar));
+            }
+            else if (currentChar == ',') {
+                tokens.emplace_back(TokenType::eCOMMA, std::string(1, currentChar));
+            }
             else if (isspace(currentChar)) {
                 // Skip whitespace
                 continue;
