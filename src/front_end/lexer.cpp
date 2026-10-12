@@ -39,6 +39,12 @@ namespace Lexer {
                 else if (identifier == "extern") {
                     tokens.emplace_back(TokenType::eEXTERN, identifier);
                 } 
+                else if (identifier == "if") {
+                    tokens.emplace_back(TokenType::eIF, identifier);
+                } 
+                else if (identifier == "else") {
+                    tokens.emplace_back(TokenType::eELSE, identifier);
+                } 
                 else {
                     tokens.emplace_back(TokenType::eIDENTIFIER, identifier);
                 }
@@ -69,17 +75,23 @@ namespace Lexer {
                 --i; // Adjust for the extra increment in the loop
                 tokens.emplace_back(TokenType::eNUMBER, number);
             } 
-            else if (currentChar == '#') {
-                // Skip comments
-                while (i < source.size() && source[i] != '\n' && source[i] != '\r') {
-                    ++i;
-                }
-            } 
             else if (currentChar == '(') {
                 tokens.emplace_back(TokenType::ePARENTHESIS_START, std::string(1, currentChar));
             }
             else if (currentChar == ')') {
                 tokens.emplace_back(TokenType::ePARENTHESIS_FINISH, std::string(1, currentChar));
+            }
+            else if (currentChar == '{') {
+                tokens.emplace_back(TokenType::eCURLY_BRACE_START, std::string(1, currentChar));
+            }
+            else if (currentChar == '}') {
+                tokens.emplace_back(TokenType::eCURLY_BRACE_FINISH, std::string(1, currentChar));
+            }
+            else if (currentChar == '[') {
+                tokens.emplace_back(TokenType::eSQUARE_BRACKET_START, std::string(1, currentChar));
+            }
+            else if (currentChar == ']') {
+                tokens.emplace_back(TokenType::eSQUARE_BRACKET_FINISH, std::string(1, currentChar));
             }
             else if (currentChar == '<') {
                 tokens.emplace_back(TokenType::eLESS_THAN, std::string(1, currentChar));
@@ -103,6 +115,12 @@ namespace Lexer {
                 // Skip whitespace
                 continue;
             }
+            else if (currentChar == '#') {
+                // Skip comments
+                while (i < source.size() && source[i] != '\n' && source[i] != '\r') {
+                    ++i;
+                }
+            } 
             else {
                 tokens.emplace_back(TokenType::eUNKNOWN, std::string(1, currentChar));
             }

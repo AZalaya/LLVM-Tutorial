@@ -19,16 +19,19 @@ enum class LogLevel
 {
     eINFO,
     eDEBUG,
+    eWARNING,
     eERROR
 };
 
 static constexpr std::string_view INFO_STRING = "INFO";
 static constexpr std::string_view DEBUG_STRING = "DEBUG";
+static constexpr std::string_view WARNING_STRING = "WARNING";
 static constexpr std::string_view ERROR_STRING = "ERROR";
 
 static const std::unordered_map<LogLevel, std::string_view> LOG_LEVEL_TO_STRING = {
     { LogLevel::eINFO, INFO_STRING },
     { LogLevel::eDEBUG, DEBUG_STRING },
+    { LogLevel::eWARNING, WARNING_STRING },
     { LogLevel::eERROR, ERROR_STRING }
 };
 
@@ -40,6 +43,8 @@ namespace FrontEnd {
         // Commands
         eDEFINITION,
         eEXTERN,
+        eIF,
+        eELSE,
 
         // Primary
         eIDENTIFIER,
@@ -48,6 +53,10 @@ namespace FrontEnd {
         // Braces
         ePARENTHESIS_START,
         ePARENTHESIS_FINISH,
+        eCURLY_BRACE_START,
+        eCURLY_BRACE_FINISH,
+        eSQUARE_BRACKET_START,
+        eSQUARE_BRACKET_FINISH,
 
         // Operators
         eLESS_THAN,
@@ -84,9 +93,7 @@ namespace FrontEnd {
         eUINT64 = UNSIGNED | INTEGER | SIZE_64,
         eFLOAT32 = SIGNED | FLOATING_POINT | SIZE_32,
         eFLOAT64 = SIGNED | FLOATING_POINT | SIZE_64,
-        eUFLOAT32 = UNSIGNED | FLOATING_POINT | SIZE_32,
-        eUFLOAT64 = UNSIGNED | FLOATING_POINT | SIZE_64,
-        eUNKNOWN
+        eUNKNOWN = -1
     };
 
     enum class BinaryOperators {
@@ -101,10 +108,16 @@ namespace FrontEnd {
     static constexpr std::string_view EOF_STRING = "EOF";
     static constexpr std::string_view DEFINITION_STRING = "DEFINITION";
     static constexpr std::string_view EXTERN_STRING = "EXTERN";
+    static constexpr std::string_view IF_STRING = "IF";
+    static constexpr std::string_view ELSE_STRING = "ELSE";
     static constexpr std::string_view IDENTIFIER_STRING = "IDENTIFIER";
     static constexpr std::string_view NUMBER_STRING = "NUMBER";
     static constexpr std::string_view PARENTHESIS_START_STRING = "PARENTHESIS_START";
     static constexpr std::string_view PARENTHESIS_FINISH_STRING = "PARENTHESIS_FINISH";
+    static constexpr std::string_view CURLY_BRACE_START_STRING = "CURLY_BRACE_START";
+    static constexpr std::string_view CURLY_BRACE_FINISH_STRING = "CURLY_BRACE_FINISH";
+    static constexpr std::string_view SQUARE_BRACKET_START_STRING = "SQUARE_BRACKET_START";
+    static constexpr std::string_view SQUARE_BRACKET_FINISH_STRING = "SQUARE_BRACKET_FINISH";
     static constexpr std::string_view LESS_THAN_STRING = "LESS_THAN";
     static constexpr std::string_view SUM_STRING = "SUM";
     static constexpr std::string_view MINUS_STRING = "MINUS";
@@ -117,10 +130,16 @@ namespace FrontEnd {
         { TokenType::eEOF, EOF_STRING },
         { TokenType::eDEFINITION, DEFINITION_STRING },
         { TokenType::eEXTERN, EXTERN_STRING },
+        { TokenType::eIF, IF_STRING },
+        { TokenType::eELSE, ELSE_STRING },
         { TokenType::eIDENTIFIER, IDENTIFIER_STRING },
         { TokenType::eNUMBER, NUMBER_STRING },
         { TokenType::ePARENTHESIS_START, PARENTHESIS_START_STRING },
         { TokenType::ePARENTHESIS_FINISH, PARENTHESIS_FINISH_STRING },
+        { TokenType::eCURLY_BRACE_START, CURLY_BRACE_START_STRING },
+        { TokenType::eCURLY_BRACE_FINISH, CURLY_BRACE_FINISH_STRING },
+        { TokenType::eSQUARE_BRACKET_START, SQUARE_BRACKET_START_STRING },
+        { TokenType::eSQUARE_BRACKET_FINISH, SQUARE_BRACKET_FINISH_STRING },
         { TokenType::eLESS_THAN, LESS_THAN_STRING },
         { TokenType::eSUM, SUM_STRING },
         { TokenType::eMINUS, MINUS_STRING },
@@ -154,8 +173,6 @@ namespace FrontEnd {
     static constexpr std::string_view UINT64_STRING = "UINT64";
     static constexpr std::string_view FLOAT32_STRING = "FLOAT32";
     static constexpr std::string_view FLOAT64_STRING = "FLOAT64";
-    static constexpr std::string_view UFLOAT32_STRING = "UFLOAT32";
-    static constexpr std::string_view UFLOAT64_STRING = "UFLOAT64";
 
     static const std::unordered_map<NumericType, std::string_view> NUMERIC_TO_STRING = {
         { NumericType::eINT8, INT8_STRING },
@@ -168,8 +185,6 @@ namespace FrontEnd {
         { NumericType::eUINT64, UINT64_STRING },
         { NumericType::eFLOAT32, FLOAT32_STRING },
         { NumericType::eFLOAT64, FLOAT64_STRING },
-        { NumericType::eUFLOAT32, UFLOAT32_STRING },
-        { NumericType::eUFLOAT64, UFLOAT64_STRING },
         { NumericType::eUNKNOWN, UNKNOWN_STRING }
     };
 

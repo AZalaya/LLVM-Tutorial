@@ -129,6 +129,13 @@ namespace FrontEnd {
          */
         std::unique_ptr<AST::ASTNode> ParseIdentifier();
 
+        /**
+         * @brief Parse an if statement.
+         * 
+         * @return std::unique_ptr<AST::ASTNode> Pointer to an if statement node.
+         */
+        std::unique_ptr<AST::ASTNode> ParseIfStatement();
+
     private:
         const std::vector<Token>& mTokens;
         const Token* mCurrentToken;

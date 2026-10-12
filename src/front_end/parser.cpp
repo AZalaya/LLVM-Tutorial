@@ -120,12 +120,33 @@ std::unique_ptr<AST::FunctionDefinitionNode> Parser::ParseDefinition()
         return nullptr;
     }
 
-    std::unique_ptr<AST::ASTNode> expression = ParseExpression();
-    if (expression == nullptr) {
+    if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after function declaration");
         return nullptr;
     }
 
-    return std::make_unique<AST::FunctionDefinitionNode>(std::move(declaration), std::move(expression));
+    GetNextToken();
+
+    std::vector<std::unique_ptr<AST::ASTNode>> expressions;
+    while (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH && mCurrentToken->mType != TokenType::eEOF) {
+        std::unique_ptr<AST::ASTNode> statement = ParseExpression();
+
+        if (statement != nullptr) {
+            expressions.emplace_back(std::move(statement));
+        }
+        else {
+            return nullptr;
+        }
+    }
+
+    if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after function body");
+        return nullptr;
+    }
+
+    GetNextToken(); // Consume the closing brace
+
+    return std::make_unique<AST::FunctionDefinitionNode>(std::move(declaration), std::move(expressions));
 }
 
 std::unique_ptr<AST::FunctionDeclarationNode> Parser::ParseExtern()
@@ -137,15 +158,18 @@ std::unique_ptr<AST::FunctionDeclarationNode> Parser::ParseExtern()
 
 std::unique_ptr<AST::FunctionDefinitionNode> Parser::ParseAnonymousExpression()
 {
-    std::unique_ptr<AST::ASTNode> expression = ParseExpression();
-    if (expression == nullptr) {
+    std::unique_ptr<AST::ASTNode> statement = ParseExpression();
+    if (statement == nullptr) {
         return nullptr;
     }
+    
+    std::vector<std::unique_ptr<AST::ASTNode>> expressions;
+    expressions.emplace_back(std::move(statement));
 
     std::unique_ptr<AST::FunctionDeclarationNode> declaration = 
         std::make_unique<AST::FunctionDeclarationNode>("_anon_expr", std::vector<std::string>{});
 
-    return std::make_unique<AST::FunctionDefinitionNode>(std::move(declaration), std::move(expression));
+    return std::make_unique<AST::FunctionDefinitionNode>(std::move(declaration), std::move(expressions));
 }
 
 std::unique_ptr<AST::FunctionDeclarationNode> Parser::ParseDeclaration()
@@ -206,6 +230,9 @@ std::unique_ptr<AST::ASTNode> Parser::ParsePrimaryExpression()
 
     case TokenType::eIDENTIFIER:
         return ParseIdentifier();
+
+    case TokenType::eIF:
+        return ParseIfStatement();
 
     default:
         Logger::GetLogger().Log(LogLevel::eERROR, "Unknown token provided");
@@ -290,12 +317,11 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIdentifier()
         while (true) {
             std::unique_ptr<AST::ASTNode> argument = ParseExpression();
             
-            if (argument != nullptr) {
-                arguments.emplace_back(std::move(argument));
-            }
-            else {
+            if (argument == nullptr) {
                 return nullptr;
             }
+
+            arguments.emplace_back(std::move(argument));    
 
             if (mCurrentToken->mType == TokenType::ePARENTHESIS_FINISH) {
                 break;
@@ -313,6 +339,73 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIdentifier()
     GetNextToken();
 
     return std::make_unique<AST::FunctionCallNode>(name, std::move(arguments));
+}
+
+std::unique_ptr<AST::ASTNode> Parser::ParseIfStatement()
+{
+    GetNextToken();
+
+    std::unique_ptr<AST::ASTNode> condition = ParseExpression();
+    if (condition == nullptr) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "No valid condition provided for if statement");
+        return nullptr;
+    }
+
+    if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after if condition");
+        return nullptr;
+    }
+
+    GetNextToken();
+
+    std::vector<std::unique_ptr<AST::ASTNode>> then_branch;
+    while (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH && mCurrentToken->mType != TokenType::eEOF) {
+        std::unique_ptr<AST::ASTNode> statement = ParseExpression();
+
+        if (statement == nullptr) {
+            return nullptr;
+        }
+
+        then_branch.emplace_back(std::move(statement));
+    }
+
+    if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after if block");
+        return nullptr;
+    }
+
+    GetNextToken();
+
+    std::vector<std::unique_ptr<AST::ASTNode>> else_branch;
+    if (mCurrentToken->mType == TokenType::eELSE) {
+        GetNextToken();
+
+        if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
+            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after else");
+            return nullptr;
+        }
+
+        GetNextToken();
+
+        while (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH && mCurrentToken->mType != TokenType::eEOF) {
+            std::unique_ptr<AST::ASTNode> statement = ParseExpression();
+
+            if (statement == nullptr) {
+                return nullptr;
+            }
+
+            else_branch.emplace_back(std::move(statement));
+        }
+
+        if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
+            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after else block");
+            return nullptr;
+        }
+
+        GetNextToken();
+    }
+
+    return std::make_unique<AST::IfStatementNode>(std::move(condition), std::move(then_branch), std::move(else_branch));
 }
 
 

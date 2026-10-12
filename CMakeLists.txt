@@ -6,10 +6,9 @@ add_executable(CKal)
 
 target_compile_features(CKal PRIVATE cxx_std_20)
 
-option(DEBUG "Enable debug output" OFF)
-option(VERBOSE "Enable verbose output" OFF)
+option(DEBUG "Enable debug output" ON)
 
-if (DEBUG OR VERBOSE)
+if (DEBUG)
     add_definitions(-DDEBUG)
 endif()
 

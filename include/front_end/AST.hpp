@@ -54,12 +54,8 @@ namespace AST {
          */
         std::string ToString() const override;
 
-        /**
-         * @brief Gets the value of the number node.
-         * 
-         * @return std::size_t The value of the number node.
-         */
-        std::size_t getValue() const;
+        template <typename T = std::size_t>
+        T getValue() const;
 
     private:
         std::size_t mValue;
@@ -110,6 +106,30 @@ namespace AST {
         BinaryOperators mOp;
         std::unique_ptr<ASTNode> mLeft;
         std::unique_ptr<ASTNode> mRight;
+    };
+
+    class IfStatementNode : public ASTNode 
+    {
+    public:
+        /**
+         * @brief Construct a new IfStatementNode object.
+         * 
+         * @param condition The condition of the if statement.
+         * @param then_branch The statements to execute if the condition is true.
+         * @param else_branch The statements to execute if the condition is false.
+         */
+        IfStatementNode(std::unique_ptr<ASTNode> condition, std::vector<std::unique_ptr<ASTNode>> then_branch, std::vector<std::unique_ptr<ASTNode>> else_branch);
+
+        /**
+         * @brief Prints the if statement node.
+         * 
+         */
+        std::string ToString() const override;
+
+    private:
+        std::unique_ptr<ASTNode> mCondition;
+        std::vector<std::unique_ptr<ASTNode>> mThenBranch;
+        std::vector<std::unique_ptr<ASTNode>> mElseBranch;
     };
 
     class FunctionCallNode : public ASTNode 
@@ -165,7 +185,7 @@ namespace AST {
          * @param declaration The function declaration node.
          * @param body The body of the function.
          */
-        FunctionDefinitionNode(std::unique_ptr<FunctionDeclarationNode> declaration, std::unique_ptr<ASTNode> body);
+        FunctionDefinitionNode(std::unique_ptr<FunctionDeclarationNode> declaration, std::vector<std::unique_ptr<ASTNode>> body);
 
         /**
          * @brief Prints the function definition node.
@@ -175,7 +195,7 @@ namespace AST {
 
     private:
         std::unique_ptr<FunctionDeclarationNode> mDeclaration;
-        std::unique_ptr<ASTNode> mBody;
+        std::vector<std::unique_ptr<ASTNode>> mBody;
     };
 
 } // namespace AST
