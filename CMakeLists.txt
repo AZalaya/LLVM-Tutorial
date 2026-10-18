@@ -33,6 +33,7 @@ target_link_libraries(CKal ${llvm_libs})
 
 target_include_directories(CKal PUBLIC "include")
 target_include_directories(CKal PUBLIC "include/front_end")
+target_include_directories(CKal PUBLIC "include/llvm")
 target_include_directories(CKal PUBLIC "include/utils")
 
 add_subdirectory("include")

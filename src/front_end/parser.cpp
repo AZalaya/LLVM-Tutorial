@@ -10,7 +10,6 @@
  */
 
 #include "parser.hpp"
-#include "AST.hpp"
 #include "logger.hpp"
 
 #include <cstddef>

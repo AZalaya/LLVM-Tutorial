@@ -1,0 +1,23 @@
+def foo(x) {
+    if (2 < 3) {
+        x
+    }
+    else {
+        0
+    }
+}
+
+def bar(x y) {
+    x + y
+    y + x
+    x * y
+}
+
+def baz(x y) {
+    if (x < y) {
+        bar(x, y)
+    }
+    else {
+        foo(x)
+    }
+}

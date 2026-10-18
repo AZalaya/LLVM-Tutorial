@@ -13,14 +13,14 @@
 #include "definitions.hpp"
 #include <iostream>
 
-Logger& Logger::GetLogger()
+const Logger& Logger::GetLogger()
 {
     static Logger logger;
 
     return logger;
 }
 
-void Logger::Log(LogLevel level, const std::string& message)
+void Logger::Log(LogLevel level, const std::string& message) const
 {
 #if !defined(DEBUG)
     if (level != LogLevel::eDEBUG) {

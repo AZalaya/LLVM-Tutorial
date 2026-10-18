@@ -49,7 +49,7 @@ namespace Lexer {
                     tokens.emplace_back(TokenType::eIDENTIFIER, identifier);
                 }
             } 
-            else if (isdigit(currentChar) && currentChar != '0') {
+            else if (isdigit(currentChar) || currentChar == '.') {
                 std::string number;
 
                 while (i < source.size() && (isdigit(source[i]) || source[i] == '.')) {

@@ -32,12 +32,16 @@ private:
     ~Logger() = default;
 
 public:
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
+
+public:
     /**
      * @brief Get the Logger object
      * 
      * @return Logger& Singleton logger reference
      */
-    static Logger& GetLogger();
+    static const Logger& GetLogger();
 
     /**
      * @brief Log new message.
@@ -45,7 +49,7 @@ public:
      * @param level Message level.
      * @param message Message string to print.
      */
-    void Log(LogLevel level, const std::string& message);
+    void Log(LogLevel level, const std::string& message) const;
 };
 
 #endif

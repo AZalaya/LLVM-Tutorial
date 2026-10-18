@@ -13,6 +13,9 @@
 #include "lexer.hpp"
 #include "parser.hpp"
 
+#include <llvm/IR/Value.h>
+#include <llvm/Support/raw_ostream.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -50,6 +53,7 @@ int main(int argc, char** argv)
     // Print the AST nodes
     for (const std::unique_ptr<FrontEnd::AST::ASTNode>& node : ast_nodes) {
         Logger::GetLogger().Log(LogLevel::eDEBUG, node->ToString());
+        node->CodeGeneration()->print(llvm::outs());
     }
 #endif
 

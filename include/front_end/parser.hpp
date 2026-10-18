@@ -13,7 +13,7 @@
 #define PARSER_HPP
 
 #include "tokens.hpp"
-#include "AST.hpp"
+#include "ast.hpp"
 
 #include <vector>
 
