@@ -1,3 +1,14 @@
+/**
+ * @file llvm_manager.cpp
+ * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
+ * @brief Implementation file for the LLVM Manager class, responsible for for creating the LLVM IR code from the parsed AST Nodes.
+ * @version 0.1
+ * @date 2026-10-20
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
+
 #include "llvm_manager.hpp"
 
 #include "logger.hpp"
@@ -73,7 +84,7 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::NumberNode& node)
     return nullptr;
 }
 
-llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::VariableNode& node)
+llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IdentifierNode& node)
 {
     std::unordered_map<std::string, llvm::Value*>::const_iterator it =
         mReferencedValues.find(node.getName());

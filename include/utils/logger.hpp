@@ -1,7 +1,7 @@
 /**
  * @file logger.hpp
  * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
- * @brief Header file for the Logger class singleton.
+ * @brief Header file for the Logger class singleton. Used to print different kind of messages from the program.
  * @version 0.1
  * @date 2026-09-23
  * 
@@ -20,26 +20,36 @@ class Logger
 {
 private:
     /**
-     * @brief Construct a new Logger object
+     * @brief Construct a new Logger object.
      * 
      */
     Logger() = default;
 
     /**
-     * @brief Destroy the Logger object
+     * @brief Destroy the Logger object.
      * 
      */
     ~Logger() = default;
 
 public:
+    /**
+     * @brief Avoid copying the Logger from the copy constructor.
+     * 
+     */
     Logger(const Logger&) = delete;
+
+    /**
+     * @brief Avoid copying the Logger from the assignment operator.
+     * 
+     * @return Logger& 
+     */
     Logger& operator=(const Logger&) = delete;
 
 public:
     /**
-     * @brief Get the Logger object
+     * @brief Get the Logger object.
      * 
-     * @return Logger& Singleton logger reference
+     * @return Logger& Singleton logger reference.
      */
     static const Logger& GetLogger();
 

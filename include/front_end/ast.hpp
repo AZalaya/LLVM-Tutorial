@@ -33,8 +33,9 @@ namespace AST {
         virtual ~ASTNode() = default;
 
         /**
-         * @brief Prints the AST node.
+         * @brief Convert the AST node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         virtual std::string ToString() const = 0;
 
@@ -74,11 +75,17 @@ namespace AST {
         NumericType getNumericType() const;
 
         /**
-         * @brief Prints the number node.
+         * @brief Convert the number node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
 
+        /**
+         * @brief Generates LLVM IR code for the number node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -87,29 +94,35 @@ namespace AST {
         
     };
 
-    class VariableNode : public ASTNode 
+    class IdentifierNode : public ASTNode 
     {
     public:
         /**
-         * @brief Construct a new VariableNode object.
+         * @brief Construct a new IdentifierNode object.
          * 
-         * @param name The name of the variable node.
+         * @param name The name of the identifier node.
          */
-        VariableNode(const std::string& name);
+        IdentifierNode(const std::string& name);
 
         /**
-         * @brief Gets the name of the variable node.
+         * @brief Gets the name of the identifier node.
          * 
-         * @return std::string The name of the variable node.
+         * @return std::string The name of the identifier node.
          */
         const std::string& getName() const;
 
         /**
-         * @brief Prints the variable node.
+         * @brief Convert the identifier node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
-
+        
+        /**
+         * @brief Generates LLVM IR code for the identifier node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -151,11 +164,17 @@ namespace AST {
         const std::unique_ptr<ASTNode>& getRHS() const;
 
         /**
-         * @brief Prints the binary operation node.
+         * @brief Convert the binary operation node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
 
+        /**
+         * @brief Generates LLVM IR code for the binary operation node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -198,11 +217,17 @@ namespace AST {
         const std::vector<std::unique_ptr<ASTNode>>& getElseBranch() const;
 
         /**
-         * @brief Prints the if statement node.
+         * @brief Convert the if statement node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
-
+        
+        /**
+         * @brief Generates LLVM IR code for the if statement node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -236,11 +261,17 @@ namespace AST {
         const std::vector<std::unique_ptr<ASTNode>>& getArguments() const;
 
         /**
-         * @brief Prints the function call node.
+         * @brief Convert the function call node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
 
+        /**
+         * @brief Generates LLVM IR code for the function call node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -274,11 +305,17 @@ namespace AST {
         const std::vector<std::string>& getArguments() const;
 
         /**
-         * @brief Prints the function declaration node.
+         * @brief Convert the function declaration node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
 
+        /**
+         * @brief Generates LLVM IR code for the function declaration node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:
@@ -313,11 +350,17 @@ namespace AST {
         const std::vector<std::unique_ptr<ASTNode>>& getBody() const;
 
         /**
-         * @brief Prints the function definition node.
+         * @brief Convert the function definition node to a string to be printed.
          * 
+         * @return std::string String representation of the node.
          */
         std::string ToString() const override;
 
+        /**
+         * @brief Generates LLVM IR code for the function definition node.
+         * 
+         * @return llvm::Value* The generated LLVM IR value.
+         */
         llvm::Value* CodeGeneration() const override;
 
     private:

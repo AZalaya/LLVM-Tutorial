@@ -1,7 +1,7 @@
 /**
  * @file logger.cpp
- * @author your name (you@domain.com)
- * @brief 
+ * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
+ * @brief Implementation file for the Logger class singleton. Used to print different kind of messages from the program.
  * @version 0.1
  * @date 2026-09-23
  * 

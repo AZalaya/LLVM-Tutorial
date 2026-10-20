@@ -118,23 +118,23 @@ namespace AST {
         return LLVMManager::GetLLVMManager().CodeGeneration(*this);
     }
 
-    // VariableNode implementation ===================================
+    // IdentifierNode implementation ===================================
 
-    VariableNode::VariableNode(const std::string& name)
+    IdentifierNode::IdentifierNode(const std::string& name)
         : mName(name) 
     {}
 
-    std::string VariableNode::ToString() const 
+    std::string IdentifierNode::ToString() const 
     {
-        return "VariableNode: " + mName + '\n';
+        return "IdentifierNode: " + mName + '\n';
     }
 
-    const std::string& VariableNode::getName() const
+    const std::string& IdentifierNode::getName() const
     {
         return mName;
     }
 
-    llvm::Value* VariableNode::CodeGeneration() const 
+    llvm::Value* IdentifierNode::CodeGeneration() const 
     {
         return LLVMManager::GetLLVMManager().CodeGeneration(*this);
     }

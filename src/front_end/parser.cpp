@@ -305,7 +305,7 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIdentifier()
     GetNextToken();
 
     if (mCurrentToken->mType != TokenType::ePARENTHESIS_START) {
-        return std::make_unique<AST::VariableNode>(name);
+        return std::make_unique<AST::IdentifierNode>(name);
     }
 
     GetNextToken();

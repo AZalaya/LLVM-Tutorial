@@ -1,7 +1,7 @@
 /**
  * @file definitions.hpp
- * @author your name (you@domain.com)
- * @brief 
+ * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
+ * @brief Common definitions used throughout the project.
  * @version 0.1
  * @date 2026-09-15
  * 

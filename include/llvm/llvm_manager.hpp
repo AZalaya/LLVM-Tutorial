@@ -1,3 +1,14 @@
+/**
+ * @file llvm_manager.hpp
+ * @author Andoni Zalaya (andoni.zalaya.c@gmail.com)
+ * @brief Header file for the LLVM Manager class, responsible for for creating the LLVM IR code from the parsed AST Nodes.
+ * @version 0.1
+ * @date 2026-10-20
+ * 
+ * @copyright Copyright (c) 2026
+ * 
+ */
+
 #ifndef LLVM_MANAGER_HPP
 #define LLVM_MANAGER_HPP
 
@@ -13,22 +24,94 @@
 class LLVMManager
 {
 private:
+    /**
+     * @brief Construct a new LLVMManager object.
+     * 
+     */
     LLVMManager();
+
+    /**
+     * @brief Destroy the LLVMManager object.
+     * 
+     */
     ~LLVMManager() = default;
 
 public:
+    /**
+     * @brief Avoid copying the LLVM Manager from the copy constructor.
+     * 
+     */
     LLVMManager(const LLVMManager&) = delete;
+
+    /**
+     * @brief Avoid copying the LLVM Manager from the assignment operator.
+     * 
+     * @return LLVMManager& 
+     */
     LLVMManager& operator=(const LLVMManager&) = delete;
 
 public:
+    /**
+     * @brief Get the LLVM Manager instance.
+     * 
+     * @return LLVMManager& Singleton instance of LLVM Manager.
+     */
     static LLVMManager& GetLLVMManager();
 
+    /**
+     * @brief Generate the LLVM IR code representation of the given number node.
+     * 
+     * @param node A number node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::NumberNode& node);
-    llvm::Value* CodeGeneration(const FrontEnd::AST::VariableNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given identifier node.
+     * 
+     * @param node An identifier node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
+    llvm::Value* CodeGeneration(const FrontEnd::AST::IdentifierNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given binary operation node.
+     * 
+     * @param node A binary operation node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::BinaryOpNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given if statement node.
+     * 
+     * @param node A if statement node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::IfStatementNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given function call node.
+     * 
+     * @param node A function call node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::FunctionCallNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given function declaration node.
+     * 
+     * @param node A function declaration node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::FunctionDeclarationNode& node);
+
+    /**
+     * @brief Generate the LLVM IR code representation of the given function definition node.
+     * 
+     * @param node A function definition node form the AST.
+     * @return llvm::Value* LLVM IR value.
+     */
     llvm::Value* CodeGeneration(const FrontEnd::AST::FunctionDefinitionNode& node);
 
 private:

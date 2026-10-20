@@ -23,10 +23,11 @@ namespace Lexer {
         for (size_t i = 0; i < source.size(); ++i) {
             char currentChar = source[i];
 
-            if (isalpha(currentChar)) {
+            // [a-zA-Z]*
+            if (std::isalpha(currentChar)) {
                 std::string identifier;
 
-                while (i < source.size() && isalnum(source[i])) {
+                while (i < source.size() && std::isalnum(source[i])) {
                     identifier += source[i];
                     ++i;
                 }
@@ -48,11 +49,24 @@ namespace Lexer {
                 else {
                     tokens.emplace_back(TokenType::eIDENTIFIER, identifier);
                 }
-            } 
-            else if (isdigit(currentChar) || currentChar == '.') {
+            }
+            // [0-9]*[ϵ|\.][0-9]*[ϵ|u|U][ϵ|f|F|d|D|l|L|i|I|s|S|c|C]
+            else if (std::isdigit(currentChar) || currentChar == '.') {
+                bool dot_used = false;
                 std::string number;
 
-                while (i < source.size() && (isdigit(source[i]) || source[i] == '.')) {
+                while (i < source.size()) {
+                    if (source[i] == '.') {
+                        if (dot_used) { 
+                            break; 
+                        }
+
+                        dot_used = true;
+                    }
+                    else if (!isdigit(source[i])) {
+                        break;
+                    }
+                    
                     number += source[i];
                     ++i;
                 }
