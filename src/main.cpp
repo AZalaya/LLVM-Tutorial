@@ -9,6 +9,7 @@
  * 
  */
 
+#include "definitions.hpp"
 #include "logger.hpp"
 #include "lexer.hpp"
 #include "parser.hpp"
@@ -16,28 +17,28 @@
 #include <llvm/IR/Value.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include <iostream>
 #include <fstream>
 
 int main(int argc, char** argv) 
 {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <source_file>" << std::endl;
+    if (argc < 3) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "Usage: " + std::string(argv[0]) + " <source_file> <output_file>");
         return 1;
     }
 
-    std::string sourceFile = argv[1];
-    std::ifstream file(sourceFile);
+    std::string source_file = argv[1];
+    std::ifstream file(source_file);
+
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << sourceFile << std::endl;
+        Logger::GetLogger().Log(LogLevel::eERROR, "Error: Could not open the source file");
         return 1;
     }
 
-    std::string sourceCode((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    std::string source_code((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     file.close();
 
     // Tokenize the source code
-    std::vector<FrontEnd::Token> tokens = FrontEnd::Lexer::Lexer::Tokenize(sourceCode);
+    std::vector<FrontEnd::Token> tokens = FrontEnd::Lexer::Lexer::Tokenize(source_code);
 
 #if defined(DEBUG)
     // Print the tokens
@@ -53,9 +54,24 @@ int main(int argc, char** argv)
     // Print the AST nodes
     for (const std::unique_ptr<FrontEnd::AST::ASTNode>& node : ast_nodes) {
         Logger::GetLogger().Log(LogLevel::eDEBUG, node->ToString());
-        node->CodeGeneration()->print(llvm::outs());
     }
 #endif
+
+    // Store the resulting IR to the output file
+    std::error_code err;
+    std::string output_file = argv[2];
+    llvm::raw_fd_ostream llvm_ostream(output_file, err);
+
+    if (err) {
+        Logger::GetLogger().Log(LogLevel::eERROR, "An error occurred trying to open the output file");
+        return 1;
+    }
+
+    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& node : ast_nodes) {
+        node->CodeGeneration()->print(llvm_ostream);
+    }
+
+    llvm_ostream.close();
 
     return 0;
 }
