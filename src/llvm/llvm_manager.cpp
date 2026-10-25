@@ -23,6 +23,11 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/Verifier.h>
 
+#include <llvm/Transforms/InstCombine/InstCombine.h>
+#include <llvm/Transforms/Scalar/Reassociate.h>
+#include "llvm/Transforms/Scalar/GVN.h"
+#include <llvm/Transforms/Scalar/SimplifyCFG.h>
+
 #include <string>
 #include <vector>
 
@@ -30,7 +35,32 @@ LLVMManager::LLVMManager()
     : mContext(std::make_unique<llvm::LLVMContext>())
     , mBuilder(std::make_unique<llvm::IRBuilder<>>(*mContext))
     , mModule(std::make_unique<llvm::Module>("CKal_Module", *mContext))
-{}
+    , mFunctionPassManager(std::make_unique<llvm::FunctionPassManager>())
+    , mLoopAnalysisManager(std::make_unique<llvm::LoopAnalysisManager>())
+    , mFunctionAnalysisManager(std::make_unique<llvm::FunctionAnalysisManager>())
+    , mCGSCCAnalysisManager(std::make_unique<llvm::CGSCCAnalysisManager>())
+    , mModuleAnalysisManager(std::make_unique<llvm::ModuleAnalysisManager>())
+    , mPassInstrumentationCallbacks(std::make_unique<llvm::PassInstrumentationCallbacks>())
+    , mStandardInstrumentations(std::make_unique<llvm::StandardInstrumentations>(*mContext, true))
+    , mPassBuilder(std::make_unique<llvm::PassBuilder>())
+{
+    mStandardInstrumentations->registerCallbacks(*mPassInstrumentationCallbacks, mModuleAnalysisManager.get());
+
+    // Standard cleanup optimizations
+    mFunctionPassManager->addPass(llvm::InstCombinePass());
+    mFunctionPassManager->addPass(llvm::ReassociatePass());
+    mFunctionPassManager->addPass(llvm::GVNPass());
+    mFunctionPassManager->addPass(llvm::SimplifyCFGPass());
+
+    mPassBuilder->registerModuleAnalyses(*mModuleAnalysisManager);
+    mPassBuilder->registerFunctionAnalyses(*mFunctionAnalysisManager);
+    mPassBuilder->crossRegisterProxies(
+        *mLoopAnalysisManager, 
+        *mFunctionAnalysisManager, 
+        *mCGSCCAnalysisManager, 
+        *mModuleAnalysisManager
+    );
+}
 
 
 LLVMManager& LLVMManager::GetLLVMManager()
@@ -147,8 +177,8 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IfStatementNode& n
     llvm::BasicBlock* then_block = llvm::BasicBlock::Create(*mContext, "then");
     llvm::BasicBlock* else_block = llvm::BasicBlock::Create(*mContext, "else");
     llvm::BasicBlock* end_block = llvm::BasicBlock::Create(*mContext, "if_cont");
-
-    mBuilder->CreateCondBr(condition, then_block, else_block);
+ 
+    mBuilder->CreateCondBr(condition, then_block, else_block); 
 
     std::vector<llvm::Value*> then_values;
     std::vector<llvm::Value*> else_values;
@@ -300,6 +330,8 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionDefinition
         function->eraseFromParent();
         return nullptr;
     }
+
+    mFunctionPassManager->run(*function, *mFunctionAnalysisManager);
 
     return function;
 }

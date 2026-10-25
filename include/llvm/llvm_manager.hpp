@@ -14,10 +14,18 @@
 
 #include "ast.hpp"
 
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/Module.h"
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Module.h>
 
+#include <llvm/Passes/PassBuilder.h>
+#include <llvm/IR/PassManager.h>
+#include <llvm/Analysis/LoopAnalysisManager.h>
+#include <llvm/Analysis/CGSCCPassManager.h>
+#include <llvm/IR/PassInstrumentation.h>
+#include <llvm/Passes/StandardInstrumentations.h>
+
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -118,6 +126,15 @@ private:
     std::unique_ptr<llvm::LLVMContext> mContext;
     std::unique_ptr<llvm::IRBuilder<>> mBuilder;
     std::unique_ptr<llvm::Module> mModule;
+
+    std::unique_ptr<llvm::FunctionPassManager> mFunctionPassManager;
+    std::unique_ptr<llvm::LoopAnalysisManager> mLoopAnalysisManager;
+    std::unique_ptr<llvm::FunctionAnalysisManager> mFunctionAnalysisManager;
+    std::unique_ptr<llvm::CGSCCAnalysisManager> mCGSCCAnalysisManager;
+    std::unique_ptr<llvm::ModuleAnalysisManager> mModuleAnalysisManager;
+    std::unique_ptr<llvm::PassInstrumentationCallbacks> mPassInstrumentationCallbacks;
+    std::unique_ptr<llvm::StandardInstrumentations> mStandardInstrumentations;
+    std::unique_ptr<llvm::PassBuilder> mPassBuilder;
 
     std::unordered_map<std::string, llvm::Value*> mReferencedValues;
 
