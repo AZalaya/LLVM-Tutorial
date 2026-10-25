@@ -107,6 +107,9 @@ namespace Lexer {
             else if (currentChar == ']') {
                 tokens.emplace_back(TokenType::eSQUARE_BRACKET_FINISH, std::string(1, currentChar));
             }
+            else if (currentChar == '=') {
+                tokens.emplace_back(TokenType::eASSIGNMENT, std::string(1, currentChar));
+            }
             else if (currentChar == '<') {
                 tokens.emplace_back(TokenType::eLESS_THAN, std::string(1, currentChar));
             }

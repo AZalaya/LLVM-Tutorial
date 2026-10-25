@@ -14,6 +14,9 @@
 
 #include "ast.hpp"
 
+#include <llvm/ADT/StringRef.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Module.h>
@@ -123,6 +126,16 @@ public:
     llvm::Value* CodeGeneration(const FrontEnd::AST::FunctionDefinitionNode& node);
 
 private:
+    /**
+    * @brief Create an Alloca instance at the beginning of the function.
+    * 
+    * @param function Function where the alloca variable will live in.
+    * @param name Variable name.
+    * @return llvm::AllocaInst* Created alloca instance.
+    */
+    llvm::AllocaInst* CreateAlloca(llvm::Function* function, const llvm::StringRef& name);
+
+private:
     std::unique_ptr<llvm::LLVMContext> mContext;
     std::unique_ptr<llvm::IRBuilder<>> mBuilder;
     std::unique_ptr<llvm::Module> mModule;
@@ -136,7 +149,7 @@ private:
     std::unique_ptr<llvm::StandardInstrumentations> mStandardInstrumentations;
     std::unique_ptr<llvm::PassBuilder> mPassBuilder;
 
-    std::unordered_map<std::string, llvm::Value*> mReferencedValues;
+    std::unordered_map<std::string, llvm::AllocaInst*> mReferencedValues;
 
 };
 

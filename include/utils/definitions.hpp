@@ -59,6 +59,7 @@ namespace FrontEnd {
         eSQUARE_BRACKET_FINISH,
 
         // Operators
+        eASSIGNMENT,
         eLESS_THAN,
         eSUM,
         eMINUS,
@@ -97,7 +98,8 @@ namespace FrontEnd {
     };
 
     enum class BinaryOperators {
-        eLESS_THAN = 1,
+        eASSIGNMENT = 1,
+        eLESS_THAN,
         eSUM,
         eMINUS,
         eMULTIPLY,
@@ -118,6 +120,7 @@ namespace FrontEnd {
     static constexpr std::string_view CURLY_BRACE_FINISH_STRING = "CURLY_BRACE_FINISH";
     static constexpr std::string_view SQUARE_BRACKET_START_STRING = "SQUARE_BRACKET_START";
     static constexpr std::string_view SQUARE_BRACKET_FINISH_STRING = "SQUARE_BRACKET_FINISH";
+    static constexpr std::string_view ASSIGNMENT_STRING = "ASSIGNMENT";
     static constexpr std::string_view LESS_THAN_STRING = "LESS_THAN";
     static constexpr std::string_view SUM_STRING = "SUM";
     static constexpr std::string_view MINUS_STRING = "MINUS";
@@ -140,6 +143,7 @@ namespace FrontEnd {
         { TokenType::eCURLY_BRACE_FINISH, CURLY_BRACE_FINISH_STRING },
         { TokenType::eSQUARE_BRACKET_START, SQUARE_BRACKET_START_STRING },
         { TokenType::eSQUARE_BRACKET_FINISH, SQUARE_BRACKET_FINISH_STRING },
+        { TokenType::eASSIGNMENT, ASSIGNMENT_STRING },
         { TokenType::eLESS_THAN, LESS_THAN_STRING },
         { TokenType::eSUM, SUM_STRING },
         { TokenType::eMINUS, MINUS_STRING },
@@ -150,6 +154,7 @@ namespace FrontEnd {
     };
 
     static const std::unordered_map<BinaryOperators, std::string_view> BINARY_OPERATOR_TO_STRING = {
+        { BinaryOperators::eASSIGNMENT, ASSIGNMENT_STRING },
         { BinaryOperators::eLESS_THAN, LESS_THAN_STRING },
         { BinaryOperators::eSUM, SUM_STRING },
         { BinaryOperators::eMINUS, MINUS_STRING },
@@ -157,6 +162,7 @@ namespace FrontEnd {
     };
 
     static const std::unordered_map<TokenType, BinaryOperators> TOKEN_TO_OPERATOR = {
+        { TokenType::eASSIGNMENT, BinaryOperators::eASSIGNMENT },
         { TokenType::eLESS_THAN, BinaryOperators::eLESS_THAN },
         { TokenType::eSUM, BinaryOperators::eSUM },
         { TokenType::eMINUS, BinaryOperators::eMINUS },

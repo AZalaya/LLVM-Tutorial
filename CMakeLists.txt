@@ -7,9 +7,14 @@ add_executable(CKal)
 target_compile_features(CKal PRIVATE cxx_std_20)
 
 option(DEBUG "Enable debug output" ON)
+option(OPTIMIZE "Enable LLVM IR optimization" OFF)
 
 if (DEBUG)
     add_definitions(-DDEBUG)
+endif()
+
+if (OPTIMIZE)
+    add_definitions(-DOPTIMIZE)
 endif()
 
 find_package(LLVM REQUIRED CONFIG)

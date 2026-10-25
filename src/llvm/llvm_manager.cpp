@@ -27,6 +27,7 @@
 #include <llvm/Transforms/Scalar/Reassociate.h>
 #include "llvm/Transforms/Scalar/GVN.h"
 #include <llvm/Transforms/Scalar/SimplifyCFG.h>
+#include <llvm/Transforms/Utils/Mem2Reg.h>
 
 #include <string>
 #include <vector>
@@ -46,11 +47,14 @@ LLVMManager::LLVMManager()
 {
     mStandardInstrumentations->registerCallbacks(*mPassInstrumentationCallbacks, mModuleAnalysisManager.get());
 
+#if !defined(DEBUG) || defined(OPTIMIZE)
     // Standard cleanup optimizations
+    mFunctionPassManager->addPass(llvm::PromotePass());
     mFunctionPassManager->addPass(llvm::InstCombinePass());
     mFunctionPassManager->addPass(llvm::ReassociatePass());
     mFunctionPassManager->addPass(llvm::GVNPass());
     mFunctionPassManager->addPass(llvm::SimplifyCFGPass());
+#endif
 
     mPassBuilder->registerModuleAnalyses(*mModuleAnalysisManager);
     mPassBuilder->registerFunctionAnalyses(*mFunctionAnalysisManager);
@@ -116,7 +120,7 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::NumberNode& node)
 
 llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IdentifierNode& node)
 {
-    std::unordered_map<std::string, llvm::Value*>::const_iterator it =
+    std::unordered_map<std::string, llvm::AllocaInst*>::const_iterator it =
         mReferencedValues.find(node.getName());
 
     if (it == mReferencedValues.end()) {
@@ -124,11 +128,44 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IdentifierNode& no
         return nullptr;
     }
     
-    return it->second;
+    llvm::AllocaInst* alloca_instance = it->second;
+
+    return mBuilder->CreateLoad(alloca_instance->getAllocatedType(), alloca_instance, node.getName());
 }
 
 llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::BinaryOpNode& node)
 {
+    if (node.getOperator() == FrontEnd::BinaryOperators::eASSIGNMENT) {
+        const FrontEnd::AST::IdentifierNode* lhs =
+            dynamic_cast<const FrontEnd::AST::IdentifierNode*>(node.getLHS().get());
+        
+        if (lhs == nullptr) {
+            Logger::GetLogger().Log(LogLevel::eERROR, "LHS value of assignment (=) operator was not mutable");
+            return nullptr;
+        }
+
+        llvm::Value* rhs = node.getRHS()->CodeGeneration();
+
+        if (rhs == nullptr) {
+            Logger::GetLogger().Log(LogLevel::eERROR, "Failed to generate code binary operation RHS");
+            return nullptr;
+        }
+
+        std::unordered_map<std::string, llvm::AllocaInst*>::const_iterator it =
+            mReferencedValues.find(lhs->getName());
+
+        if (it == mReferencedValues.end()) {
+            Logger::GetLogger().Log(LogLevel::eERROR, "Reference to undefined variable: {}", lhs->getName());
+            return nullptr;
+        }
+
+        llvm::AllocaInst* alloca_instance = it->second;
+
+        mBuilder->CreateStore(rhs, alloca_instance);
+
+        return rhs;
+    }
+
     llvm::Value* lhs = node.getLHS()->CodeGeneration();
     llvm::Value* rhs = node.getRHS()->CodeGeneration();
 
@@ -307,7 +344,11 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionDefinition
 
     mReferencedValues.clear();
     for (llvm::Argument& argument : function->args()) {
-        mReferencedValues[argument.getName().str()] = &argument;
+        llvm::AllocaInst* alloca_instance = CreateAlloca(function, argument.getName());
+
+        mBuilder->CreateStore(&argument, alloca_instance);
+
+        mReferencedValues[argument.getName().str()] = alloca_instance;
     }
 
     std::vector<llvm::Value*> statements;
@@ -334,4 +375,22 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionDefinition
     mFunctionPassManager->run(*function, *mFunctionAnalysisManager);
 
     return function;
+}
+
+
+llvm::AllocaInst* LLVMManager::CreateAlloca(llvm::Function* function, const llvm::StringRef& name)
+{
+    llvm::BasicBlock * current_block = mBuilder->GetInsertBlock();
+    llvm::BasicBlock::iterator current_insert_point = mBuilder->GetInsertPoint();
+    
+    llvm::BasicBlock& function_entry = function->getEntryBlock();
+
+    mBuilder->SetInsertPoint(&function_entry, function_entry.begin());
+
+    llvm::AllocaInst* alloca_instance = 
+        mBuilder->CreateAlloca(llvm::Type::getInt32Ty(*mContext), nullptr, name);
+
+    mBuilder->SetInsertPoint(current_block, current_insert_point);
+
+    return alloca_instance;
 }
