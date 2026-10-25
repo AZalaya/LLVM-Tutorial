@@ -53,13 +53,18 @@ public:
      */
     static const Logger& GetLogger();
 
-    /**
-     * @brief Log new message.
-     * 
-     * @param level Message level.
-     * @param message Message string to print.
-     */
-    void Log(LogLevel level, const std::string& message) const;
+     /**
+      * @brief Log new message.
+      * 
+      * @tparam Args 
+      * @param level Message level.
+      * @param format_string Formatted message string to print.
+      * @param args Foramt parameters
+      */
+    template <typename... Args>
+    void Log(LogLevel level, const std::string& format_string, Args... args) const;
 };
+
+#include "logger.inl"
 
 #endif

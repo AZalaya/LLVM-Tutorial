@@ -11,6 +11,7 @@
 
 #include "ast.hpp"
 
+#include "definitions.hpp"
 #include "logger.hpp"
 #include "llvm_manager.hpp"
 
@@ -108,9 +109,9 @@ namespace AST {
         return mNumericType;
     }
 
-    std::string NumberNode::ToString() const 
+    void NumberNode::Print() const 
     {
-        return "NumberNode: " + std::to_string(mValue) + " (" + std::string(NUMERIC_TO_STRING.at(mNumericType)) + ")\n";
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "NumberNode: {} ({})", mValue, NUMERIC_TO_STRING.at(mNumericType));
     }
 
     llvm::Value* NumberNode::CodeGeneration() const 
@@ -124,9 +125,9 @@ namespace AST {
         : mName(name) 
     {}
 
-    std::string IdentifierNode::ToString() const 
+    void IdentifierNode::Print() const 
     {
-        return "IdentifierNode: " + mName + '\n';
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "IdentifierNode: {}", mName);
     }
 
     const std::string& IdentifierNode::getName() const
@@ -160,17 +161,16 @@ namespace AST {
         return mRight;
     }
 
-    std::string BinaryOpNode::ToString() const 
+    void BinaryOpNode::Print() const 
     {
-        std::string result = "BinaryOpNode: " + std::string(BINARY_OPERATOR_TO_STRING.at(mOp)) + '\n';
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "BinaryOpNode: {}", BINARY_OPERATOR_TO_STRING.at(mOp));
+        
         if (mLeft) {
-            result += mLeft->ToString();
+            mLeft->Print();
         }
         if (mRight) {
-            result += mRight->ToString();
+            mRight->Print();
         }
-        
-        return result;
     }
 
     llvm::Value* BinaryOpNode::CodeGeneration() const 
@@ -184,26 +184,28 @@ namespace AST {
         : mCondition(std::move(condition)), mThenBranch(std::move(then_branch)), mElseBranch(std::move(else_branch)) 
     {}
 
-    std::string IfStatementNode::ToString() const 
+    void IfStatementNode::Print() const 
     {
-        std::string result = "IfStatementNode: \n";
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "IfStatementNode: ");
+
         if (mCondition) {
-            result += "Condition: \n" + mCondition->ToString();
+            Logger::GetLogger().Log(LogLevel::eDEBUG, "Condition: ");
+            mCondition->Print();
         }
-        result += "Then Branch: \n";
+        
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "Then branch: ");
         for (const std::unique_ptr<ASTNode>& node : mThenBranch) {
             if (node) {
-                result += node->ToString();
-            }
-        }
-        result += "Else Branch: \n";
-        for (const std::unique_ptr<ASTNode>& node : mElseBranch) {
-            if (node) {
-                result += node->ToString();
+                node->Print();
             }
         }
         
-        return result;
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "Else branch: ");
+        for (const std::unique_ptr<ASTNode>& node : mElseBranch) {
+            if (node) {
+                node->Print();
+            }
+        }
     }
 
     const std::unique_ptr<ASTNode>& IfStatementNode::getCondition() const 
@@ -232,16 +234,15 @@ namespace AST {
         : mName(name), mArguments(std::move(arguments)) 
     {}
 
-    std::string FunctionCallNode::ToString() const 
+    void FunctionCallNode::Print() const 
     {
-        std::string result = "FunctionCallNode: " + mName + '\n';
-        for (const std::unique_ptr<ASTNode>& arg : mArguments) {
-            if (arg) {
-                result += arg->ToString();
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "FunctionCallNode: {}", mName);
+
+        for (const std::unique_ptr<ASTNode>& argument : mArguments) {
+            if (argument) {
+                argument->Print();
             }
         }
-        
-        return result;
     }
 
     const std::string& FunctionCallNode::getName() const 
@@ -265,14 +266,13 @@ namespace AST {
         : mName(name), mArguments(std::move(arguments)) 
     {}
 
-    std::string FunctionDeclarationNode::ToString() const 
+    void FunctionDeclarationNode::Print() const 
     {
-        std::string result = "FunctionDeclarationNode: " + mName + '\n';
-        for (const std::string& arg : mArguments) {
-            result += "Argument: " + arg + '\n';
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "FunctionDeclarationNode: {}", mName);
+
+        for (const std::string& argument : mArguments) {
+            Logger::GetLogger().Log(LogLevel::eDEBUG, "Argument: : {}", argument);
         }
-        
-        return result;
     }
 
     const std::string& FunctionDeclarationNode::getName() const 
@@ -296,19 +296,18 @@ namespace AST {
         : mDeclaration(std::move(declaration)), mBody(std::move(body)) 
     {}
 
-    std::string FunctionDefinitionNode::ToString() const 
+    void FunctionDefinitionNode::Print() const 
     {
-        std::string result = "FunctionDefinitionNode: \n";
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "FunctionDefinitionNode: ");
+
         if (mDeclaration) {
-            result += mDeclaration->ToString();
+            mDeclaration->Print();
         }
         for (const std::unique_ptr<AST::ASTNode>& node : mBody) {
             if (node) {
-                result += node->ToString();
+                node->Print();
             }
         }
-
-        return result;
     }
 
     const std::unique_ptr<FunctionDeclarationNode>& FunctionDefinitionNode::getDeclaration() const 

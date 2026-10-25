@@ -35,9 +35,8 @@ namespace AST {
         /**
          * @brief Convert the AST node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        virtual std::string ToString() const = 0;
+        virtual void Print() const = 0;
 
         /**
          * @brief Generates LLVM IR code for the AST node.
@@ -77,9 +76,8 @@ namespace AST {
         /**
          * @brief Convert the number node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
 
         /**
          * @brief Generates LLVM IR code for the number node.
@@ -114,9 +112,8 @@ namespace AST {
         /**
          * @brief Convert the identifier node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
         
         /**
          * @brief Generates LLVM IR code for the identifier node.
@@ -166,9 +163,8 @@ namespace AST {
         /**
          * @brief Convert the binary operation node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
 
         /**
          * @brief Generates LLVM IR code for the binary operation node.
@@ -219,9 +215,8 @@ namespace AST {
         /**
          * @brief Convert the if statement node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
         
         /**
          * @brief Generates LLVM IR code for the if statement node.
@@ -263,9 +258,8 @@ namespace AST {
         /**
          * @brief Convert the function call node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
 
         /**
          * @brief Generates LLVM IR code for the function call node.
@@ -307,9 +301,8 @@ namespace AST {
         /**
          * @brief Convert the function declaration node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
 
         /**
          * @brief Generates LLVM IR code for the function declaration node.
@@ -352,9 +345,8 @@ namespace AST {
         /**
          * @brief Convert the function definition node to a string to be printed.
          * 
-         * @return std::string String representation of the node.
          */
-        std::string ToString() const override;
+        void Print() const override;
 
         /**
          * @brief Generates LLVM IR code for the function definition node.

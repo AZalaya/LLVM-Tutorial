@@ -70,3 +70,6 @@ Testing/
 
 # vscode editor
 .vscode/
+
+# output folder
+output/

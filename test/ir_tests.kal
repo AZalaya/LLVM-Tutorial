@@ -17,7 +17,6 @@ def baz(x y) {
     if (x < y) {
         bar(x, y)
     }
-    else {
-        foo(x)
-    }
+    
+    foo(x)
 }

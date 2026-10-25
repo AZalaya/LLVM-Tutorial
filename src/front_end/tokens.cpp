@@ -11,6 +11,8 @@
 
 #include "tokens.hpp"
 
+#include "logger.hpp"
+
  namespace FrontEnd {
 
     Token::Token(TokenType token_type, const std::string& value) 
@@ -18,9 +20,9 @@
     , mValue(value) 
     {}
 
-    std::string Token::ToString() const
+    void Token::Print() const
     {
-        return "Token(Type: " + std::string(TOKEN_TO_STRING.at(mType)) + ", Value: " + mValue + ")";
+        Logger::GetLogger().Log(LogLevel::eDEBUG, "Token(Type: {}, Value: {})", TOKEN_TO_STRING.at(mType), mValue);
     }
 
 }

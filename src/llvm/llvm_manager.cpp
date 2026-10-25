@@ -90,7 +90,7 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IdentifierNode& no
         mReferencedValues.find(node.getName());
 
     if (it == mReferencedValues.end()) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Reference to undefined variable: " + node.getName());
+        Logger::GetLogger().Log(LogLevel::eERROR, "Reference to undefined variable: {}", node.getName());
         return nullptr;
     }
     
@@ -141,17 +141,22 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IfStatementNode& n
 
     llvm::Function* current_function = mBuilder->GetInsertBlock()->getParent();
 
+    const std::vector<std::unique_ptr<FrontEnd::AST::ASTNode>>& then_statements = node.getThenBranch();
+    const std::vector<std::unique_ptr<FrontEnd::AST::ASTNode>>& else_statements = node.getElseBranch();
+
     llvm::BasicBlock* then_block = llvm::BasicBlock::Create(*mContext, "then");
     llvm::BasicBlock* else_block = llvm::BasicBlock::Create(*mContext, "else");
-    llvm::BasicBlock* merge_block = llvm::BasicBlock::Create(*mContext, "if_cont");
+    llvm::BasicBlock* end_block = llvm::BasicBlock::Create(*mContext, "if_cont");
 
     mBuilder->CreateCondBr(condition, then_block, else_block);
+
+    std::vector<llvm::Value*> then_values;
+    std::vector<llvm::Value*> else_values;
 
     current_function->insert(current_function->end(), then_block);
     mBuilder->SetInsertPoint(then_block);
 
-    std::vector<llvm::Value*> then_values;
-    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& statement : node.getThenBranch()) {
+    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& statement : then_statements) {
         llvm::Value* statement_value = statement->CodeGeneration();
 
         if (statement_value == nullptr) {
@@ -162,15 +167,14 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IfStatementNode& n
         then_values.emplace_back(statement_value);
     }
 
-    mBuilder->CreateBr(merge_block);
+    mBuilder->CreateBr(end_block);
 
     then_block = mBuilder->GetInsertBlock();
 
     current_function->insert(current_function->end(), else_block);
     mBuilder->SetInsertPoint(else_block);
 
-    std::vector<llvm::Value*> else_values;
-    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& statement : node.getElseBranch()) {
+    for (const std::unique_ptr<FrontEnd::AST::ASTNode>& statement : else_statements) {
         llvm::Value* statement_value = statement->CodeGeneration();
 
         if (statement_value == nullptr) {
@@ -181,21 +185,17 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::IfStatementNode& n
         else_values.emplace_back(statement_value);
     }
 
-    mBuilder->CreateBr(merge_block);
+    mBuilder->CreateBr(end_block);
 
     else_block = mBuilder->GetInsertBlock();
 
-    current_function->insert(current_function->end(), merge_block);
-    mBuilder->SetInsertPoint(merge_block);
+    current_function->insert(current_function->end(), end_block);
+    mBuilder->SetInsertPoint(end_block);
 
     llvm::PHINode* phi_node = mBuilder->CreatePHI(llvm::Type::getInt32Ty(*mContext), then_values.size() + else_values.size(), "if_result");
 
-    for (llvm::Value* value : then_values) {
-        phi_node->addIncoming(value, then_block);
-    }
-    for (llvm::Value* value : else_values) {
-        phi_node->addIncoming(value, else_block);
-    }
+    phi_node->addIncoming(then_values.back(), then_block);
+    phi_node->addIncoming(else_values.back(), else_block);
 
     return phi_node;
 }
@@ -205,14 +205,14 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionCallNode& 
     llvm::Function* function = mModule->getFunction(node.getName());
 
     if (function == nullptr) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Call to undefined function: " + node.getName());
+        Logger::GetLogger().Log(LogLevel::eERROR, "Call to undefined function: {}", node.getName());
         return nullptr;
     }
 
     const std::vector<std::unique_ptr<FrontEnd::AST::ASTNode>>& arguments = node.getArguments();
 
     if (function->arg_size() != arguments.size()) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Function call argument count mismatch for function: " + node.getName());
+        Logger::GetLogger().Log(LogLevel::eERROR, "Function call argument count mismatch for function: {}", node.getName());
         return nullptr;
     }
 
@@ -262,12 +262,12 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionDefinition
     }
 
     if (function == nullptr) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Function definition for undefined function: " + function_name);
+        Logger::GetLogger().Log(LogLevel::eERROR, "Function definition for undefined function: {}", function_name);
         return nullptr;
     }
 
     if (!function->empty()) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Function redefinition: " + function_name);
+        Logger::GetLogger().Log(LogLevel::eERROR, "Function redefinition: {}", function_name);
         return nullptr;
     }
 
@@ -296,7 +296,7 @@ llvm::Value* LLVMManager::CodeGeneration(const FrontEnd::AST::FunctionDefinition
     mBuilder->CreateRet(statements.back());
 
     if (llvm::verifyFunction(*function, &llvm::errs())) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Function verification failed: " + function_name);
+        Logger::GetLogger().Log(LogLevel::eERROR, "Function verification failed: {}", function_name);
         function->eraseFromParent();
         return nullptr;
     }

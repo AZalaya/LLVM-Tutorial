@@ -22,7 +22,7 @@
 int main(int argc, char** argv) 
 {
     if (argc < 3) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Usage: " + std::string(argv[0]) + " <source_file> <output_file>");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Usage: {} <source_file> <output_file>", argv[0]);
         return 1;
     }
 
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     std::ifstream file(source_file);
 
     if (!file.is_open()) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Error: Could not open the source file");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Error: Could not open the source file: {}", source_file);
         return 1;
     }
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 #if defined(DEBUG)
     // Print the tokens
     for (const FrontEnd::Token& token : tokens) {
-        Logger::GetLogger().Log(LogLevel::eDEBUG, token.ToString());
+        token.Print();
     }
 #endif
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 #if defined(DEBUG)
     // Print the AST nodes
     for (const std::unique_ptr<FrontEnd::AST::ASTNode>& node : ast_nodes) {
-        Logger::GetLogger().Log(LogLevel::eDEBUG, node->ToString());
+        node->Print();
     }
 #endif
 
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     llvm::raw_fd_ostream llvm_ostream(output_file, err);
 
     if (err) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "An error occurred trying to open the output file");
+        Logger::GetLogger().Log(LogLevel::eERROR, "An error occurred trying to open the output file: {}", output_file);
         return 1;
     }
 

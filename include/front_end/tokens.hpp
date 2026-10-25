@@ -34,9 +34,8 @@ namespace FrontEnd {
         /**
          * @brief Returns a string representation of the token.
          * 
-         * @return std::string 
          */
-        std::string ToString() const;
+        void Print() const;
     };
 
 }

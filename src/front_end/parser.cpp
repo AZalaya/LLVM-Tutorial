@@ -120,7 +120,7 @@ std::unique_ptr<AST::FunctionDefinitionNode> Parser::ParseDefinition()
     }
 
     if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after function declaration");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{{' after function declaration");
         return nullptr;
     }
 
@@ -139,7 +139,7 @@ std::unique_ptr<AST::FunctionDefinitionNode> Parser::ParseDefinition()
     }
 
     if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after function body");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}}' after function body");
         return nullptr;
     }
 
@@ -351,7 +351,7 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIfStatement()
     }
 
     if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after if condition");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{{' after if condition");
         return nullptr;
     }
 
@@ -369,7 +369,7 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIfStatement()
     }
 
     if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
-        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after if block");
+        Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}}' after if block");
         return nullptr;
     }
 
@@ -380,7 +380,7 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIfStatement()
         GetNextToken();
 
         if (mCurrentToken->mType != TokenType::eCURLY_BRACE_START) {
-            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{' after else");
+            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '{{' after else");
             return nullptr;
         }
 
@@ -397,7 +397,7 @@ std::unique_ptr<AST::ASTNode> Parser::ParseIfStatement()
         }
 
         if (mCurrentToken->mType != TokenType::eCURLY_BRACE_FINISH) {
-            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}' after else block");
+            Logger::GetLogger().Log(LogLevel::eERROR, "Expected '}}' after else block");
             return nullptr;
         }
 
